@@ -1,0 +1,164 @@
+---
+title: "Effect Of Attributes On Ratings Of Bars And Restaurants"
+author: "Swapnil Jamthe"
+date: "18 November 2015"
+output: pdf_document
+---
+
+##Introduction
+There are varoius attributes about Bars & Restaurants.This study is about the effects of various attributes on ratings of the Bars & Restaurants. This will be helpful for the owners to know which attributes matter when they have to make a choice.  
+
+#Methods and Data
+Following processing was done on data.  
+1) Attributes for businesses,their ratings by different uers were tied into single table.  
+2) Attributes having more than 20% missing data were ignored  
+3) Rows having all the data were only considered.Total rows considered were 859933.  
+
+Linear regression model was fitted to predict rating(stars) considering attributes as predictors. Following were the attributes with their values considered as predictors.
+
+```{r echo=FALSE,message=FALSE,warning=FALSE,results='asis'}
+library(knitr)
+```
+
+
+```{r echo=FALSE}
+
+predictors<-data.frame(attribute=character(),values=character())
+predictors<-rbind(predictors,data.frame(attribute="Good For Groups",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Outdoor Seating",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Price Range",values="1,2,3 or 4"))
+predictors<-rbind(predictors,data.frame(attribute="Good for Kids",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Alcohol",values="full_bar,none or beer_and_wine"))
+predictors<-rbind(predictors,data.frame(attribute="Noise Level",values="average,loud,quiet or very_loud"))
+predictors<-rbind(predictors,data.frame(attribute="Has TV",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Attire",values="casual,dressy or formal"))
+predictors<-rbind(predictors,data.frame(attribute="Delivery",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Takes Reservations",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Waiter Service",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Wi-Fi",values="no,free or paid"))
+predictors<-rbind(predictors,data.frame(attribute="Caters",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Romantic",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Intimate",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Classy",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Hipster",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Divey",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Touristy",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Trendy",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Upscale",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Ambience Casual",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Good for latenight",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Good for lunch",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Good for dinner",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Good for breakfast",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Good for brunch",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Parking garage",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Parking street",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Parking validated",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Parking lot",values="true or false"))
+predictors<-rbind(predictors,data.frame(attribute="Parking valet",values="true or false"))
+
+kable(predictors,caption="Attributes considered")
+
+```
+
+Variance inflation factor was calculated for all the predictors. Maximum VIF found was around 4.5.Most of them were around 1.Thus multicolinearity can be ignored and coefficients can be studied.
+
+```{r echo=FALSE}
+
+v<-numeric(0)
+v<-append(v,1.124976)
+v<-append(v,1.271632)
+v<-append(v,3.232459)
+v<-append(v,2.157787)
+v<-append(v,2.805974)
+v<-append(v,1.337365)
+v<-append(v,1.335678)
+v<-append(v,2.416943)
+
+v<-append(v,1.154441)
+v<-append(v,1.807307)
+v<-append(v,1.932412)
+v<-append(v,1.208413)
+v<-append(v,1.349727)
+v<-append(v,1.441641)
+v<-append(v,1.197176)
+v<-append(v,2.081782)
+
+v<-append(v,1.546393)
+v<-append(v,1.470151)
+v<-append(v,1.243490)
+v<-append(v,2.600213)
+v<-append(v,1.673906)
+v<-append(v,4.528098)
+v<-append(v,1.224083)
+v<-append(v,1.636138)
+
+v<-append(v,1.619866)
+v<-append(v,1.445828)
+v<-append(v,1.193618)
+v<-append(v,2.510972)
+v<-append(v,1.805026)
+v<-append(v,1.061727)
+v<-append(v,2.876013)
+v<-append(v,1.692608)
+
+hist(v,main="Histogram for VIFs",xlab="VIF value")
+```
+
+##Results
+
+```{r echo=FALSE}
+topPositiveFrame<-data.frame(Attribute=character(),Coefficient=numeric())
+topPositiveFrame<-rbind(topPositiveFrame,data.frame(Attribute="Attrire formal vs casual",Coefficient=0.4330516))
+topPositiveFrame<-rbind(topPositiveFrame,data.frame(Attribute="Ambience Hipster True",Coefficient=0.2455279))
+topPositiveFrame<-rbind(topPositiveFrame,data.frame(Attribute="Ambience Classy True",Coefficient=0.2256067))
+topPositiveFrame<-rbind(topPositiveFrame,data.frame(Attribute="Ambience Intimate True",Coefficient=0.2146979))
+topPositiveFrame<-rbind(topPositiveFrame,data.frame(Attribute="Ambience Romantic True",Coefficient=0.2093387))
+
+kable(topPositiveFrame,caption="Top positive effect of attributes on rating")
+```
+
+About attributes  
+1) Attire is categorical variable with possible values 'casual','dressy' and 'formal'. 'casual' is the reference category in regression.  
+2) Others are binary variables.  
+
+```{r echo=FALSE}
+topNegativeFrame<-data.frame(Attribute=character(),Coefficient=numeric())
+topNegativeFrame<-rbind(topNegativeFrame,data.frame(Attribute="WiFi Paid vs Free",Coefficient=-0.4422584))
+topNegativeFrame<-rbind(topNegativeFrame,data.frame(Attribute="Noise Level Very Loud vs average",Coefficient=-0.4335201))
+topNegativeFrame<-rbind(topNegativeFrame,data.frame(Attribute="Ambience Touristy True",Coefficient=-0.2259980))
+topNegativeFrame<-rbind(topNegativeFrame,data.frame(Attribute="Alcohol Full Bar vs  Beer and Wine",Coefficient=-0.1859295))
+topNegativeFrame<-rbind(topNegativeFrame,data.frame(Attribute="Noise Level Loud vs average",Coefficient=-0.1485293))
+
+kable(topNegativeFrame,caption="Top negative effect of attributes on rating")
+```
+
+About attributes  
+1) Wifi is categorical variable with possible values 'no', 'free','paid'. 'free' is the reference category in regression.  
+2) Noise Level is categorical variable with possible values 'average','loud','quiet','very_loud'. 'average' is the reference category in regression.  
+3) Alcohol is categorical variable with possible values 'full_bar','none','beer_and_wine'. 'beer_and_wine' is the reference category in regression.  
+4) Ambience Touristy is the binary variable.
+
+##Discussions  
+Following are the top observations done during the study.  
+
+Increase in rating is expected by a customer in the following cases  
+1) By 0.4330516 when attire is formal formal compared to casual.       
+2) By 0.2455279 when ambience is hipster compared to non hipster.      
+3) By 0.2256067 when ambience is classy compared to non classy.    
+4) By 0.2146979 when ambience is intimate compared to non intimate.   
+5) By 0.2093387 when ambience is romantic compared to non romantic.   
+
+Decease in rating is expected by a customer in the following cases  
+1) By 0.4422584 when wifi is paid compared to free.   
+2) By 0.4335201 when noise level is very loud compared to average.    
+3) By 0.2259980 when ambience is touristy compared to non touristy.  
+4) By 0.1859295 when there is full bar compared to beer and wine.  
+5) By 0.1485293 when noise level is loud compared to average.  
+
+
+
+
+
+
+
